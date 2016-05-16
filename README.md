@@ -1,0 +1,1 @@
+This is a boilerplate "starter" project that uses the anim-utils package to create a very simple animation that responds to sound from an mp3 file.  The project can be copied and modified to quickly create new projects that generate more complex animations, while avoiding the complexity of reading an mp3, performing fast fourier transforms, setting up thread pools, etc..
