@@ -13,7 +13,8 @@
 (defun generate-frame (left-fft-data right-fft-data)
   "Create a data structure that represents one frame of the animation.
    Later, the frame data is used to generate the actual image."
-  (cons (abs (aref left-fft-data 0)) (abs (aref right-fft-data 0))))
+  (loop for lft across left-fft-data for rgt across right-fft-data for cnt below 128
+     collect (cons (abs lft) (abs rgt))))
 
 (defun draw-frame (file-name frame width height)
   "Use cairo to draw a frame of the animation, saving in the specified file."
@@ -41,11 +42,14 @@
              (xmapper (x) (map-val (* x-aspect-ratio x) -200.0 200.0 0 width))
 
              ;; ymapper does the same thing, but for y coordinates
-             (ymapper (y) (map-val (* y-aspect-ratio y) -200.0 200.0 0 height)))
+             (ymapper (y) (map-val (* y-aspect-ratio y) 0.0 200.0 0 height)))
 
         ;; Actual drawing goes here.  In this case, just a line.
-        (cairo-line (xmapper (- (car frame))) (ymapper 0.0)
-                    (xmapper (cdr frame)) (ymapper 0.0))))))
+        (loop for vals in frame
+           for idx from 0
+           do
+             (cairo-line (xmapper (- (car vals))) (ymapper (* 1.25 idx))
+                         (xmapper (cdr vals)) (ymapper (* 1.25 idx))))))))
 
 (defun from-mp3 (&key
                    mp3-file-name output-directory
